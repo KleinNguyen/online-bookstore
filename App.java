@@ -73,7 +73,7 @@ public class App {
                     placeOrder();
                     break;
                 case "5":
-                    viewOrderHistory()
+                    viewOrderHistory();
                     break;
                 case "6":
                     searchOrder();
@@ -88,10 +88,34 @@ public class App {
         }
     }
 
+    private static void searchOrder() {
+
+    }
+
+    private static void viewOrderHistory() {
+
+    }
+
+    private static void placeOrder() {
+
+    }
+
+    private static void sortBookMenu() {
+
+    }
+
+    private static void searchBookMenu() {
+
+    }
+
+    private static void viewAllProduct() {
+
+    }
+
     private static void adminMenu(){
         while(true){
             clearScreen();
-            System.out.println("---------Customer Menu---------");
+            System.out.println("---------Admin Menu---------");
             System.out.println("Admin: " + admin.getUsername());
             System.out.println("1. Book Management");
             System.out.println("2. Order Management");
@@ -104,7 +128,7 @@ public class App {
                     bookManagementMenu();
                     break;
                 case "2":
-                    orderManagementMenu()
+                    orderManagementMenu();
                     break;
                 case "3":
                     customerManagementMenu();
@@ -117,5 +141,17 @@ public class App {
                     break;
             }
         }
+    }
+
+    private static void customerManagementMenu() {
+
+    }
+
+    private static void orderManagementMenu() {
+
+    }
+
+    private static void bookManagementMenu() {
+
     }
 }
