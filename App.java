@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-
     private static Scanner sc = new Scanner(System.in);
     private static ArrayList<Book> bookList = new ArrayList<>();
     private static ArrayList<Customer> customerList = new ArrayList<>();
@@ -76,7 +75,6 @@ public class App {
         String email = sc.nextLine();
         System.out.print("Enter password: ");
         String password = sc.nextLine();
-
         // check customer
         for (Customer cus : customerList) {
             if (cus.getEmail().equalsIgnoreCase(email) && cus.getPassword().equals(password)) {
@@ -86,7 +84,6 @@ public class App {
                 return;
             }
         }
-
         // check admin
         for (Admin admin : adminList) {
             if (admin.getEmail().equalsIgnoreCase(email) && admin.getPassword().equals(password)) {
@@ -200,11 +197,11 @@ public class App {
         }
         Order newOrder = new Order(orderIdCounter++, cus, items, "Pending");
         orderQueue.add(newOrder);
-        // orderHistory.push(newOrder);
         System.out.println("\nOrder placed successfully!");
         System.out.println(newOrder);
         pause();
     }
+
     // view order history feature
     private static void viewOrderHistory(Customer cus) {
         clearScreen();
@@ -228,7 +225,7 @@ public class App {
         pause();
     }
     
-    // UPDATED: Sort book menu using MySort algorithms
+    // sort book menu
     private static void sortBookMenu() {
         clearScreen();
         System.out.println("---------Sort Books---------");
@@ -236,14 +233,10 @@ public class App {
         System.out.println("2. Sort by Author (Selection Sort)");
         System.out.print("Enter your choice: ");
         String choice = sc.nextLine();
-        
         Book[] bookArray = bookList.toArray(new Book[0]);
-        
         switch(choice) {
             case "1":
-                // Sort by Title using Merge Sort (Book already implements Comparable by title)
                 MySort.mergeSort(bookArray);
-                
                 System.out.println("Books sorted by Title (Merge Sort):");
                 for(int i = 0; i < bookArray.length; i++) {
                     Book book = bookArray[i];
@@ -251,7 +244,6 @@ public class App {
                         book.getBookTitle() + " | Author: " + book.getAuthor());
                 }
                 break;
-                
             case "2":
                 // Sort by Author using Selection Sort
                 BookByAuthor[] booksByAuthor = new BookByAuthor[bookArray.length];
@@ -259,7 +251,6 @@ public class App {
                     booksByAuthor[i] = new BookByAuthor(bookArray[i]);
                 }
                 MySort.selectionSort(booksByAuthor);
-                
                 System.out.println("Books sorted by Author (Selection Sort):");
                 for(int i = 0; i < booksByAuthor.length; i++) {
                     Book book = booksByAuthor[i].getBook();
@@ -267,47 +258,39 @@ public class App {
                         book.getBookTitle() + " | Author: " + book.getAuthor());
                 }
                 break;
-                
             default:
                 System.out.println("Invalid choice!");
                 pause();
                 return;
         }
-        
         pause();
     }
     
     // Helper class for sorting by Author
     private static class BookByAuthor implements Comparable<BookByAuthor> {
         private Book book;
-        
         public BookByAuthor(Book book) {
             this.book = book;
         }
-        
         public Book getBook() {
             return book;
         }
-        
         @Override
         public int compareTo(BookByAuthor other) {
             return this.book.getAuthor().compareToIgnoreCase(other.book.getAuthor());
         }
     }
-    
+    // search book method
     private static void searchBook() {
         clearScreen();
         System.out.println("---------Search Book---------");
         System.out.print("Enter keyword to search (title or author): ");
         String keyword = sc.nextLine().toLowerCase();
-
         Book[] bookArray = bookList.toArray(new Book[0]);
         boolean found = false;
-
         for (int i = 0; i < bookArray.length; i++) {
             Book titleCheck = new Book(0, bookArray[i].getBookTitle(), "");
             Book authorCheck = new Book(0, "", bookArray[i].getAuthor());
-
             //  check book title
             if (bookArray[i].getBookTitle().toLowerCase().contains(keyword)) {
                 int index = MySearch.linearSearch(bookArray, bookArray[i]);
@@ -332,7 +315,6 @@ public class App {
         }
         pause();
     }
-
 
     private static void adminMenu(Admin admin){
         while(true){
@@ -398,7 +380,7 @@ public class App {
             }
         }
     }
-    
+    // add book method
     private static void addBook() {
         clearScreen();
         System.out.println("---------Add New Book---------");
@@ -406,80 +388,66 @@ public class App {
         String title = sc.nextLine();
         System.out.print("Enter author: ");
         String author = sc.nextLine();
-        
         Book newBook = new Book(bookIdCounter++, title, author);
         bookList.add(newBook);
-        
         System.out.println("Book added successfully!");
         pause();
     }
+    // update book method
     private static void updateBook() {
         clearScreen();
         System.out.println("---------Update Book---------");
-
         if(bookList.isEmpty()) {
             System.out.println("No books to update!");
             pause();
             return;
         }
-
-        viewAllProduct(); // hiện danh sách sách
+        viewAllProduct(); 
         System.out.print("\nEnter book ID to update: ");
-
         try {
             int id = Integer.parseInt(sc.nextLine());
             Book bookToUpdate = null;
-
             for(Book book : bookList) {
                 if(book.getId() == id) {
                     bookToUpdate = book;
                     break;
                 }
             }
-
             if(bookToUpdate == null) {
                 System.out.println("Book not found!");
                 pause();
                 return;
             }
-
             System.out.print("Enter new title (leave empty to keep current): ");
             String newTitle = sc.nextLine();
             if(!newTitle.isEmpty()) {
                 bookToUpdate.setBookTitle(newTitle);
             }
-
             System.out.print("Enter new author (leave empty to keep current): ");
             String newAuthor = sc.nextLine();
             if(!newAuthor.isEmpty()) {
                 bookToUpdate.setAuthor(newAuthor);
             }
-
             System.out.println("Book updated successfully!");
         } catch(NumberFormatException e) {
             System.out.println("Invalid ID!");
         }
-
         pause();
     }
-
+    // delete book method
     private static void deleteBook() {
         clearScreen();
         System.out.println("---------Delete Book---------");
-        
         if(bookList.isEmpty()) {
             System.out.println("No books to delete!");
             pause();
             return;
         }
-        
         viewAllProduct();
         System.out.print("\nEnter book ID to delete: ");
-        
         try {
             int id = Integer.parseInt(sc.nextLine());
             boolean removed = false;
-            
             for(int i = 0; i < bookList.size(); i++) {
                 if(bookList.get(i).getId() == id) {
                     bookList.remove(i);
@@ -488,17 +456,15 @@ public class App {
                     break;
                 }
             }
-            
             if(!removed) {
                 System.out.println("Book not found!");
             }
         } catch(NumberFormatException e) {
             System.out.println("Invalid ID!");
         }
-        
         pause();
     }
-
+    // order management menu
     private static void orderManagementMenu() {
         while(true) {
             clearScreen();
@@ -508,7 +474,6 @@ public class App {
             System.out.println("0. Back");
             System.out.print("Enter your choice: ");
             String choice = sc.nextLine();
-            
             switch(choice) {
                 case "1":
                     processOrder();
@@ -524,17 +489,15 @@ public class App {
             }
         }
     }
-    
+    // process order from pending to completed
     private static void processOrder() {
         clearScreen();
         System.out.println("---------Process Order---------");
-
         if(orderQueue.isEmpty()) {
             System.out.println("No orders to process!");
             pause();
             return;
         }
-
         System.out.println("Pending Orders:");
         MyQueueArrayList<Order> tempQueue = new MyQueueArrayList<>();
         while(!orderQueue.isEmpty()) {
@@ -543,7 +506,6 @@ public class App {
             tempQueue.add(o);
         }
         while(!tempQueue.isEmpty()) orderQueue.add(tempQueue.poll());
-
         System.out.print("\nEnter Order ID to process: ");
         int orderId;
         try {
@@ -553,10 +515,8 @@ public class App {
             pause();
             return;
         }
-
         tempQueue = new MyQueueArrayList<>();
         boolean found = false;
-
         while(!orderQueue.isEmpty()) {
             Order o = orderQueue.poll();
             if(o.getId() == orderId && !found) {
@@ -573,30 +533,25 @@ public class App {
             }
         }
         while(!tempQueue.isEmpty()) orderQueue.add(tempQueue.poll());
-
         if(!found) {
             System.out.println("\nOrder ID not found!");
         }
         pause();
     }
 
-
+    // order history for admin
     private static void orderHistory() {
         clearScreen();
         System.out.println("---------Order History (Stack)---------");
-
         if(orderHistory.isEmpty()) {
             System.out.println("No order history available!");
             pause();
             return;
         }
-
-        // hiển thị từ top xuống dưới
         for(int i = orderHistory.size() - 1; i >= 0; i--) {
             Order order = orderHistory.get(i);
             System.out.println(order);
         }
-
         pause();
     }
 
