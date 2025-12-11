@@ -15,21 +15,22 @@ public class App {
     private static int bookIdCounter = 1;
     private static int orderIdCounter = 1;
     private static int customerIdCounter = 1;
+
     public static void main(String[] args) {
         // mock data book list
-        bookList.add(new Book(bookIdCounter++, "Brave New World", "Aldous Huxley"));   
         bookList.add(new Book(bookIdCounter++, "Catch-22", "Joseph Heller"));          
         bookList.add(new Book(bookIdCounter++, "Don Quixote", "Miguel de Cervantes")); 
         bookList.add(new Book(bookIdCounter++, "Animal Farm", "George Orwell"));      
         bookList.add(new Book(bookIdCounter++, "Frankenstein", "Mary Shelley"));     
+        bookList.add(new Book(bookIdCounter++, "Brave New World", "Aldous Huxley"));   
 
 
         // mock data for customer
-        customerList.add(new Customer(customerIdCounter++, "tuan","tuan@gmail.com", "tuan's street"));
-        customerList.add(new Customer(customerIdCounter++, "huy", "huy@gmail.com", "huy's street"));
+        customerList.add(new Customer(customerIdCounter++, "tuan","tuan@gmail.com", "tuan's street","123456"));
+        customerList.add(new Customer(customerIdCounter++, "huy", "huy@gmail.com", "huy's street", "123456"));
 
         // mock data for admin 
-        adminList.add(new Admin(1, "admin", "admin@gmail.com"));
+        adminList.add(new Admin(1, "admin", "admin@gmail.com","123456"));
         mainMenu();
     }
 
@@ -46,27 +47,17 @@ public class App {
         sc.nextLine();
     }
     // main menu: inluce login customer and admin
-    private static void mainMenu(){
+    private static void mainMenu() {
         while(true){
             clearScreen();
             System.out.println("---------Online Bookstore---------");
-            System.out.println("1. Customer Login");
-            System.out.println("2. Admin Login");
+            System.out.println("1. Login");
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
             String choice = sc.nextLine();
             switch (choice) {
                 case "1":
-                    Customer loginCus = customerLogin();
-                    if(loginCus != null){
-                        customerMenu(loginCus);
-                    }
-                    break;
-                case "2":
-                    Admin loginAdmin = adminLogin();
-                    if(loginAdmin != null){
-                        adminMenu(loginAdmin);
-                    }
+                    login(); // gọi hàm login duy nhất
                     break;
                 case "0":
                     System.out.println("Exiting...");
@@ -77,44 +68,38 @@ public class App {
             }
         }
     }
-    // customer login
-    private static Customer customerLogin(){
+    // login
+    private static void login() {
         clearScreen();
-        System.out.println("---------Customer Login---------");
+        System.out.println("---------Login---------");
         System.out.print("Enter email: ");
         String email = sc.nextLine();
+        System.out.print("Enter password: ");
+        String password = sc.nextLine();
 
-        for(Customer cus : customerList){
-            if(cus.getEmail().equalsIgnoreCase(email)){
-                System.out.println("\nLogin successful!");
+        // check customer
+        for (Customer cus : customerList) {
+            if (cus.getEmail().equalsIgnoreCase(email) && cus.getPassword().equals(password)) {
+                System.out.println("\nCustomer login successful!");
                 pause();
-                return cus;
+                customerMenu(cus);
+                return;
             }
         }
 
-        System.out.println("\nLogin failed! User not found!");
-        pause();
-        return null;
-    }
-
-    // admin login
-    private static Admin adminLogin(){
-        clearScreen();
-        System.out.println("---------Admin Login---------");
-        System.out.print("Enter email: ");
-        String email = sc.nextLine();
-        for(Admin ad : adminList){
-            if( ad.getEmail().equalsIgnoreCase(email)){
+        // check admin
+        for (Admin admin : adminList) {
+            if (admin.getEmail().equalsIgnoreCase(email) && admin.getPassword().equals(password)) {
                 System.out.println("\nAdmin login successful!");
                 pause();
-                return ad;
+                adminMenu(admin);
+                return;
             }
         }
-
-        System.out.println("\nLogin failed! Admin not found!");
+        System.out.println("\nLogin failed! Email or password incorrect!");
         pause();
-        return null;
     }
+
     // customer menu
     private static void customerMenu(Customer cus){
         while(true){
@@ -134,7 +119,7 @@ public class App {
                     viewAllProduct();
                     break;
                 case "2":
-                    searchBookMenu();
+                    searchBook();
                     break;
                 case "3":
                     sortBookMenu();
@@ -215,7 +200,7 @@ public class App {
         }
         Order newOrder = new Order(orderIdCounter++, cus, items, "Pending");
         orderQueue.add(newOrder);
-        orderHistory.push(newOrder);
+        // orderHistory.push(newOrder);
         System.out.println("\nOrder placed successfully!");
         System.out.println(newOrder);
         pause();
@@ -242,12 +227,13 @@ public class App {
         }
         pause();
     }
-    // sort book menu
+    
+    // UPDATED: Sort book menu using MySort algorithms
     private static void sortBookMenu() {
         clearScreen();
         System.out.println("---------Sort Books---------");
-        System.out.println("1. Sort by ID (Selection Sort)");
-        System.out.println("2. Sort by Title (Merge Sort)");
+        System.out.println("1. Sort by Title (Merge Sort)");
+        System.out.println("2. Sort by Author (Selection Sort)");
         System.out.print("Enter your choice: ");
         String choice = sc.nextLine();
         
@@ -255,79 +241,98 @@ public class App {
         
         switch(choice) {
             case "1":
-                // Sort by ID using Selection Sort
-                MySort.selectionSort(bookArray);
-                System.out.println("Books sorted by ID (Selection Sort):");
-                break;
-            case "2":
-                // Sort by Title using Merge Sort
+                // Sort by Title using Merge Sort (Book already implements Comparable by title)
                 MySort.mergeSort(bookArray);
+                
                 System.out.println("Books sorted by Title (Merge Sort):");
+                for(int i = 0; i < bookArray.length; i++) {
+                    Book book = bookArray[i];
+                    System.out.println((i+1) + ". ID: " + book.getId() + " | Title: " + 
+                        book.getBookTitle() + " | Author: " + book.getAuthor());
+                }
                 break;
+                
+            case "2":
+                // Sort by Author using Selection Sort
+                BookByAuthor[] booksByAuthor = new BookByAuthor[bookArray.length];
+                for(int i = 0; i < bookArray.length; i++) {
+                    booksByAuthor[i] = new BookByAuthor(bookArray[i]);
+                }
+                MySort.selectionSort(booksByAuthor);
+                
+                System.out.println("Books sorted by Author (Selection Sort):");
+                for(int i = 0; i < booksByAuthor.length; i++) {
+                    Book book = booksByAuthor[i].getBook();
+                    System.out.println((i+1) + ". ID: " + book.getId() + " | Title: " + 
+                        book.getBookTitle() + " | Author: " + book.getAuthor());
+                }
+                break;
+                
             default:
                 System.out.println("Invalid choice!");
                 pause();
                 return;
         }
         
-        for(int i = 0; i < bookArray.length; i++) {
-            Book book = bookArray[i];
-            System.out.println((i+1) + ". ID: " + book.getId() + " | Title: " + 
-                book.getBookTitle() + " | Author: " + book.getAuthor());
-        }
         pause();
     }
-    // search book menu
-    private static void searchBookMenu() {
+    
+    // Helper class for sorting by Author
+    private static class BookByAuthor implements Comparable<BookByAuthor> {
+        private Book book;
+        
+        public BookByAuthor(Book book) {
+            this.book = book;
+        }
+        
+        public Book getBook() {
+            return book;
+        }
+        
+        @Override
+        public int compareTo(BookByAuthor other) {
+            return this.book.getAuthor().compareToIgnoreCase(other.book.getAuthor());
+        }
+    }
+    
+    private static void searchBook() {
         clearScreen();
         System.out.println("---------Search Book---------");
-        System.out.println("1. Search by Title");
-        System.out.println("2. Search by Author");
-        System.out.print("Enter your choice: ");
-        String choice = sc.nextLine();
-        
-        switch(choice) {
-            case "1":
-                searchBookByTitle();
-                break;
-            case "2":
-                searchBookByAuthor();
-                break;
-            default:
-                System.out.println("Invalid choice!");
+        System.out.print("Enter keyword to search (title or author): ");
+        String keyword = sc.nextLine().toLowerCase();
+
+        Book[] bookArray = bookList.toArray(new Book[0]);
+        boolean found = false;
+
+        for (int i = 0; i < bookArray.length; i++) {
+            Book titleCheck = new Book(0, bookArray[i].getBookTitle(), "");
+            Book authorCheck = new Book(0, "", bookArray[i].getAuthor());
+
+            //  check book title
+            if (bookArray[i].getBookTitle().toLowerCase().contains(keyword)) {
+                int index = MySearch.linearSearch(bookArray, bookArray[i]);
+                if (index != -1) {
+                    System.out.println("Found (Title match) at index " + index + ": ID: " + bookArray[i].getId() +
+                            " | Title: " + bookArray[i].getBookTitle() + " | Author: " + bookArray[i].getAuthor());
+                    found = true;
+                }
+            }
+            // check book author
+            else if (bookArray[i].getAuthor().toLowerCase().contains(keyword)) {
+                int index = MySearch.linearSearch(bookArray, bookArray[i]);
+                if (index != -1) {
+                    System.out.println("Found (Author match) at index " + index + ": ID: " + bookArray[i].getId() +
+                            " | Title: " + bookArray[i].getBookTitle() + " | Author: " + bookArray[i].getAuthor());
+                    found = true;
+                }
+            }
+        }
+        if (!found) {
+            System.out.println("No book found with keyword: " + keyword);
         }
         pause();
     }
-    private static void searchBookByTitle() {
-        System.out.print("Enter book title: ");
-        String title = sc.nextLine();
-        boolean found = false;
-        for(Book book : bookList) {
-            if(book.getBookTitle().toLowerCase().contains(title.toLowerCase())) {
-                System.out.println("Found: ID: " + book.getId() + " | Title: " + 
-                    book.getBookTitle() + " | Author: " + book.getAuthor());
-                found = true;
-            }
-        }
-        if(!found) {
-            System.out.println("No book found with title containing: " + title);
-        }
-    }
-    private static void searchBookByAuthor() {
-        System.out.print("Enter author name: ");
-        String author = sc.nextLine();
-        boolean found = false;
-        for(Book book : bookList) {
-            if(book.getAuthor().toLowerCase().contains(author.toLowerCase())) {
-                System.out.println("Found: ID: " + book.getId() + " | Title: " + 
-                    book.getBookTitle() + " | Author: " + book.getAuthor());
-                found = true;
-            }
-        }
-        if(!found) {
-            System.out.println("No book found with author: " + author);
-        }
-    }
+
 
     private static void adminMenu(Admin admin){
         while(true){
@@ -362,8 +367,9 @@ public class App {
             System.out.println("---------Book Management---------");
             System.out.println("1. View all books");
             System.out.println("2. Add new book");
-            System.out.println("3. Delete book");
-            System.out.println("4. Update book");
+            System.out.println("3. Update book");
+            System.out.println("4. Delete book");
+            System.out.println("5. Search book");
             System.out.println("0. Back");
             System.out.print("Enter your choice: ");
             String choice = sc.nextLine();
@@ -376,10 +382,13 @@ public class App {
                     addBook();
                     break;
                 case "3":
-                    deleteBook();
+                    updateBook();
                     break;
                 case "4":
-                    searchBookMenu();
+                    deleteBook();
+                    break;
+                case "5":
+                    searchBook();
                     break;
                 case "0":
                     return;
@@ -404,7 +413,56 @@ public class App {
         System.out.println("Book added successfully!");
         pause();
     }
-    
+    private static void updateBook() {
+        clearScreen();
+        System.out.println("---------Update Book---------");
+
+        if(bookList.isEmpty()) {
+            System.out.println("No books to update!");
+            pause();
+            return;
+        }
+
+        viewAllProduct(); // hiện danh sách sách
+        System.out.print("\nEnter book ID to update: ");
+
+        try {
+            int id = Integer.parseInt(sc.nextLine());
+            Book bookToUpdate = null;
+
+            for(Book book : bookList) {
+                if(book.getId() == id) {
+                    bookToUpdate = book;
+                    break;
+                }
+            }
+
+            if(bookToUpdate == null) {
+                System.out.println("Book not found!");
+                pause();
+                return;
+            }
+
+            System.out.print("Enter new title (leave empty to keep current): ");
+            String newTitle = sc.nextLine();
+            if(!newTitle.isEmpty()) {
+                bookToUpdate.setBookTitle(newTitle);
+            }
+
+            System.out.print("Enter new author (leave empty to keep current): ");
+            String newAuthor = sc.nextLine();
+            if(!newAuthor.isEmpty()) {
+                bookToUpdate.setAuthor(newAuthor);
+            }
+
+            System.out.println("Book updated successfully!");
+        } catch(NumberFormatException e) {
+            System.out.println("Invalid ID!");
+        }
+
+        pause();
+    }
+
     private static void deleteBook() {
         clearScreen();
         System.out.println("---------Delete Book---------");
@@ -445,21 +503,17 @@ public class App {
         while(true) {
             clearScreen();
             System.out.println("---------Order Management (Queue)---------");
-            System.out.println("1. View pending orders");
-            System.out.println("2. Process next order");
-            System.out.println("3. View all order history");
+            System.out.println("1. Process next order");
+            System.out.println("2. View all order history");
             System.out.println("0. Back");
             System.out.print("Enter your choice: ");
             String choice = sc.nextLine();
             
             switch(choice) {
                 case "1":
-                    viewPendingOrders();
+                    processOrder();
                     break;
                 case "2":
-                    processNextOrder();
-                    break;
-                case "3":
                     orderHistory();
                     break;
                 case "0":
@@ -471,70 +525,80 @@ public class App {
         }
     }
     
-    private static void viewPendingOrders() {
+    private static void processOrder() {
         clearScreen();
-        System.out.println("---------Pending Orders (Queue)---------");
-        
-        if(orderQueue.isEmpty()) {
-            System.out.println("No pending orders!");
-        } else {
-            MyQueueArrayList<Order> tempQueue = new MyQueueArrayList<>();
-            int count = 1;
-            
-            while(!orderQueue.isEmpty()) {
-                Order order = orderQueue.poll();
-                System.out.println("Order #" + count++);
-                System.out.println(order);
-                tempQueue.add(order);
-            }
-            
-            // Restore queue
-            while(!tempQueue.isEmpty()) {
-                orderQueue.add(tempQueue.poll());
-            }
-        }
-        
-        pause();
-    }
-    
-    private static void processNextOrder() {
-        clearScreen();
-        System.out.println("---------Process Next Order---------");
-        
+        System.out.println("---------Process Order---------");
+
         if(orderQueue.isEmpty()) {
             System.out.println("No orders to process!");
             pause();
             return;
         }
-        
-        Order order = orderQueue.poll();
-        System.out.println("Processing order:");
-        System.out.println(order);
-        
-        order.setStatus("Completed");
-        orderHistory.push(order);
-        
-        System.out.println("Order processed and moved to history!");
+
+        System.out.println("Pending Orders:");
+        MyQueueArrayList<Order> tempQueue = new MyQueueArrayList<>();
+        while(!orderQueue.isEmpty()) {
+            Order o = orderQueue.poll();
+            System.out.println("Order ID: " + o.getId() + " | Customer: " + o.getCustomer().getUsername() + " | Status: " + o.getStatus());
+            tempQueue.add(o);
+        }
+        while(!tempQueue.isEmpty()) orderQueue.add(tempQueue.poll());
+
+        System.out.print("\nEnter Order ID to process: ");
+        int orderId;
+        try {
+            orderId = Integer.parseInt(sc.nextLine());
+        } catch(NumberFormatException e) {
+            System.out.println("Invalid ID!");
+            pause();
+            return;
+        }
+
+        tempQueue = new MyQueueArrayList<>();
+        boolean found = false;
+
+        while(!orderQueue.isEmpty()) {
+            Order o = orderQueue.poll();
+            if(o.getId() == orderId && !found) {
+                if(!o.getStatus().equals("Completed")) {
+                    o.setStatus("Completed");
+                    orderHistory.push(o);  
+                    System.out.println("\nOrder processed successfully!");
+                } else {
+                    System.out.println("\nThis order has already been processed!");
+                }
+                found = true;
+            } else {
+                tempQueue.add(o);  
+            }
+        }
+        while(!tempQueue.isEmpty()) orderQueue.add(tempQueue.poll());
+
+        if(!found) {
+            System.out.println("\nOrder ID not found!");
+        }
         pause();
     }
+
+
     private static void orderHistory() {
         clearScreen();
         System.out.println("---------Order History (Stack)---------");
-        MyStack<Order> tempStack = new MyStack<>();
-        boolean hasOrders = false;
-        while(!orderHistory.isEmpty()) {
-            Order order = orderHistory.pop();
-            System.out.println(order);
-            hasOrders = true;
-            tempStack.push(order);
-        }
-        while(!tempStack.isEmpty()) {
-            orderHistory.push(tempStack.pop());
-        }
-        if(!hasOrders) {
+
+        if(orderHistory.isEmpty()) {
             System.out.println("No order history available!");
+            pause();
+            return;
         }
+
+        // hiển thị từ top xuống dưới
+        for(int i = orderHistory.size() - 1; i >= 0; i--) {
+            Order order = orderHistory.get(i);
+            System.out.println(order);
+        }
+
         pause();
     }
-}
 
+
+}

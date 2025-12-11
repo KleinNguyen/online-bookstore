@@ -5,12 +5,16 @@ public class Customer {
     private String username;
     private String email;
     private String address;
+    private String password;
 
-    public Customer(int id, String username, String email, String address){
+
+    public Customer(int id, String username, String email, String address, String password){
         this.id = id;
         this.username = username;
         this.email = email;
         this.address = address;
+        this.password = password;
+
     }
     public int getId() {
         return id;
@@ -43,6 +47,14 @@ public class Customer {
     public void setAddress(String address) {
         this.address = address;
     }
+    public String getPassword(){
+        return password;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
+    }
+
     public String toString() {
         return String.format("ID: %d | Name: %s | Email: %s | Address: %s", id, username, email, address);
     }

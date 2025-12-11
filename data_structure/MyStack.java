@@ -61,6 +61,14 @@ public class MyStack<T> {
         capacity = newCapacity;
         stack = newStack;
     }
+    public T get(int index) {
+        if(index < 0 || index >= top) throw new IndexOutOfBoundsException();
+        return stack[index];
+    }
+
+    public int size() {
+        return top;
+    }
 
     public String toString(){
         if (top == 0) return "[]";

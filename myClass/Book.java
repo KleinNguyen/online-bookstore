@@ -33,11 +33,11 @@ public class Book implements Comparable<Book>{
     public void setAuthor(String author) {
         this.author = author;
     }
-
     @Override
     public int compareTo(Book other) {
-        return this.bookTitle.compareToIgnoreCase(other.bookTitle);
+        return Integer.compare(this.id, other.id);
     }
+
     @Override
     public String toString() {
         return String.format("ID: %d | Title: %s | Author: %s", id, bookTitle, author);

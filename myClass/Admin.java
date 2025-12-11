@@ -4,11 +4,15 @@ public class Admin {
     private int id;
     private String username;
     private String email;
+    private String password;
 
-    public Admin(int id, String username, String email){
+
+    public Admin(int id, String username, String email, String password){
         this.id = id;
         this.username = username;
         this.email = email;
+        this.password = password;
+
     }
     public int getId() {
         return id;
@@ -33,4 +37,14 @@ public class Admin {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getPassword(){
+        return password;
+    }
+
+    public void setPassword(String password){
+        this.password = password;
+    }
+
+
 }
