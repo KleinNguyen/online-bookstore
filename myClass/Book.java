@@ -1,6 +1,6 @@
 package myClass;
 
-public class Book {
+public class Book implements Comparable<Book>{
     private int id;
     private String bookTitle;
     private String author;
@@ -34,4 +34,12 @@ public class Book {
         this.author = author;
     }
 
+    @Override
+    public int compareTo(Book other) {
+        return this.bookTitle.compareToIgnoreCase(other.bookTitle);
+    }
+    @Override
+    public String toString() {
+        return String.format("ID: %d | Title: %s | Author: %s", id, bookTitle, author);
+    }
 }
