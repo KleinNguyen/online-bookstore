@@ -12,32 +12,38 @@ public class Customer {
         this.email = email;
         this.address = address;
     }
-
-    public void viewProducts(){
-
+    public int getId() {
+        return id;
     }
 
-    public void placeOrder(){
-
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void viewOrderHistory(){
-
+    public String getUsername() {
+        return username;
     }
 
-    public void searchBook(){
-
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void searchOrder(){
-
+    public String getEmail() {
+        return email;
     }
 
-    public void sortBook(){
-
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void sortOder(){
+    public String getAddress() {
+        return address;
+    }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public String toString() {
+        return String.format("ID: %d | Name: %s | Email: %s | Address: %s", id, username, email, address);
     }
 }
