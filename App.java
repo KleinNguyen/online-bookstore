@@ -311,8 +311,8 @@ public class App {
         Book[] bookArray = bookList.toArray(new Book[0]);
         boolean found = false;
         for (int i = 0; i < bookArray.length; i++) {
-            Book titleCheck = new Book(0, bookArray[i].getBookTitle(), "");
-            Book authorCheck = new Book(0, "", bookArray[i].getAuthor());
+            new Book(0, bookArray[i].getBookTitle(), "");
+            new Book(0, "", bookArray[i].getAuthor());
             //  check book title
             if (bookArray[i].getBookTitle().toLowerCase().contains(keyword)) {
                 int index = MySearch.linearSearch(bookArray, bookArray[i]);
