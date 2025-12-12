@@ -103,11 +103,11 @@ public class App {
             clearScreen();
             System.out.println("---------Customer Menu---------");
             System.out.println("Customer: " + cus.getUsername());
-            System.out.println("1. View all products");
-            System.out.println("2. Search book");
-            System.out.println("3. Sort book");
-            System.out.println("4. Place order");
-            System.out.println("5. View order history");
+            System.out.println("1. View all products (ArrayList)");
+            System.out.println("2. Search book (Linear Search)");
+            System.out.println("3. Sort book (Merge Sort, Selection Sort)");
+            System.out.println("4. Place order (ArrayList, Queue)");
+            System.out.println("5. View order history (Stack)");
             System.out.println("0. Back to main menu");
             System.out.print("Enter your choice: ");
             String choice = sc.nextLine();
@@ -197,6 +197,7 @@ public class App {
         }
         Order newOrder = new Order(orderIdCounter++, cus, items, "Pending");
         orderQueue.add(newOrder);
+        orderHistory.push(newOrder);
         System.out.println("\nOrder placed successfully!");
         System.out.println(newOrder);
         pause();
@@ -205,7 +206,7 @@ public class App {
     // view order history feature
     private static void viewOrderHistory(Customer cus) {
         clearScreen();
-        System.out.println("---------Order History (Stack)---------");
+        System.out.println("---------Order History---------");
         MyStack<Order> tempStack = new MyStack<>();
         boolean hasOrders = false;
         while(!orderHistory.isEmpty()) {
@@ -236,16 +237,19 @@ public class App {
         Book[] bookArray = bookList.toArray(new Book[0]);
         switch(choice) {
             case "1":
-                MySort.mergeSort(bookArray);
-                System.out.println("Books sorted by Title (Merge Sort):");
+                BookByTitle[] booksByTitle = new BookByTitle[bookArray.length];
                 for(int i = 0; i < bookArray.length; i++) {
-                    Book book = bookArray[i];
+                    booksByTitle[i] = new BookByTitle(bookArray[i]);
+                }
+                MySort.mergeSort(booksByTitle);
+                System.out.println("Books sorted by Title (Merge Sort):");
+                for(int i = 0; i < booksByTitle.length; i++) {
+                    Book book = booksByTitle[i].getBook();
                     System.out.println((i+1) + ". ID: " + book.getId() + " | Title: " + 
                         book.getBookTitle() + " | Author: " + book.getAuthor());
                 }
                 break;
             case "2":
-                // Sort by Author using Selection Sort
                 BookByAuthor[] booksByAuthor = new BookByAuthor[bookArray.length];
                 for(int i = 0; i < bookArray.length; i++) {
                     booksByAuthor[i] = new BookByAuthor(bookArray[i]);
@@ -280,6 +284,24 @@ public class App {
             return this.book.getAuthor().compareToIgnoreCase(other.book.getAuthor());
         }
     }
+    // Helper class for sorting by Title
+    private static class BookByTitle implements Comparable<BookByTitle> {
+        private Book book;
+
+        public BookByTitle(Book book) {
+            this.book = book;
+        }
+
+        public Book getBook() {
+            return book;
+        }
+
+        @Override
+        public int compareTo(BookByTitle other) {
+            return this.book.getBookTitle().compareToIgnoreCase(other.book.getBookTitle());
+        }
+    }
+
     // search book method
     private static void searchBook() {
         clearScreen();
@@ -321,8 +343,8 @@ public class App {
             clearScreen();
             System.out.println("---------Admin Menu---------");
             System.out.println("Admin: " + admin.getUsername());
-            System.out.println("1. Book Management");
-            System.out.println("2. Order Management");
+            System.out.println("1. Book Management (ArrayList)");
+            System.out.println("2. Order Management (Queue, Stack, ArrayList)");
             System.out.println("0. Back to main menu");
             System.out.print("Enter your choice: ");
             String choice = sc.nextLine();
@@ -468,9 +490,9 @@ public class App {
     private static void orderManagementMenu() {
         while(true) {
             clearScreen();
-            System.out.println("---------Order Management (Queue)---------");
-            System.out.println("1. Process next order");
-            System.out.println("2. View all order history");
+            System.out.println("---------Order Management---------");
+            System.out.println("1. Process next order (ArrayList + Queue)");
+            System.out.println("2. View all order history (Stack)");
             System.out.println("0. Back");
             System.out.print("Enter your choice: ");
             String choice = sc.nextLine();
@@ -522,7 +544,6 @@ public class App {
             if(o.getId() == orderId && !found) {
                 if(!o.getStatus().equals("Completed")) {
                     o.setStatus("Completed");
-                    orderHistory.push(o);  
                     System.out.println("\nOrder processed successfully!");
                 } else {
                     System.out.println("\nThis order has already been processed!");
@@ -542,7 +563,7 @@ public class App {
     // order history for admin
     private static void orderHistory() {
         clearScreen();
-        System.out.println("---------Order History (Stack)---------");
+        System.out.println("---------Order History---------");
         if(orderHistory.isEmpty()) {
             System.out.println("No order history available!");
             pause();
@@ -554,6 +575,4 @@ public class App {
         }
         pause();
     }
-
-
 }

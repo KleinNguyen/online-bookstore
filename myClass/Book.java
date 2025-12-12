@@ -1,6 +1,6 @@
 package myClass;
 
-public class Book implements Comparable<Book>{
+public class Book {
     private int id;
     private String bookTitle;
     private String author;
@@ -32,10 +32,6 @@ public class Book implements Comparable<Book>{
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-    @Override
-    public int compareTo(Book other) {
-        return Integer.compare(this.id, other.id);
     }
 
     @Override
