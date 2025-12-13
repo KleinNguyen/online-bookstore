@@ -9,8 +9,11 @@ public class App {
     private static ArrayList<Book> bookList = new ArrayList<>();
     private static ArrayList<Customer> customerList = new ArrayList<>();
     private static ArrayList<Admin> adminList = new ArrayList<>();
+    
     private static MyQueueArrayList<Order> orderQueue = new MyQueueArrayList<>();
+
     private static MyStack<Order> orderHistory = new MyStack<>();
+
     private static int bookIdCounter = 1;
     private static int orderIdCounter = 1;
     private static int customerIdCounter = 1;
@@ -56,7 +59,7 @@ public class App {
             String choice = sc.nextLine();
             switch (choice) {
                 case "1":
-                    login(); // gọi hàm login duy nhất
+                    login(); 
                     break;
                 case "0":
                     System.out.println("Exiting...");
@@ -196,8 +199,9 @@ public class App {
             }
         }
         Order newOrder = new Order(orderIdCounter++, cus, items, "Pending");
-        orderQueue.add(newOrder);
         orderHistory.push(newOrder);
+
+        orderQueue.add(newOrder);
         System.out.println("\nOrder placed successfully!");
         System.out.println(newOrder);
         pause();
@@ -211,6 +215,7 @@ public class App {
         boolean hasOrders = false;
         while(!orderHistory.isEmpty()) {
             Order order = orderHistory.pop();
+            
             if (order.getCustomer().getId() == cus.getId()) {
             System.out.println(order);
             hasOrders = true;
@@ -541,6 +546,7 @@ public class App {
         boolean found = false;
         while(!orderQueue.isEmpty()) {
             Order o = orderQueue.poll();
+
             if(o.getId() == orderId && !found) {
                 if(!o.getStatus().equals("Completed")) {
                     o.setStatus("Completed");
